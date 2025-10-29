@@ -30,6 +30,7 @@ import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClient.FeatureType;
 import com.android.billingclient.api.BillingClient.ProductType;
 import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingFlowParams.ProductDetailsParams;
 import com.android.billingclient.api.BillingResult;
@@ -297,12 +298,15 @@ public final class PurchasePlugin
 
     Log.d(mTag, "init()");
 
-
     mBillingClient = BillingClient
-      .newBuilder(cordova.getActivity())
-      .enablePendingPurchases()
-      .setListener(this)
-      .build();
+        .newBuilder(cordova.getActivity())
+        .setListener(this)
+        .enablePendingPurchases(
+            PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts() // se vendi in-app (non solo abbonamenti)
+                .build()
+        )
+        .build();    
 
     resetLastResult(BILLING_CLIENT_NOT_CONNECTED);
     startServiceConnection(() -> {
